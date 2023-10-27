@@ -1,10 +1,3 @@
-//
-//  ContentView.swift
-//  Diario Alimentar
-//
-//  Created by Karol Gerhard on 12/10/23.
-//
-
 import SwiftUI
 import Firebase
 
@@ -14,8 +7,9 @@ struct ContentView: View {
     var body: some View {
         VStack{
             if userLoggedIn {
-                Home()
-            }else{
+                BottomMenuView()
+            }
+            else{
                 Login()
             }
         }

@@ -1,40 +1,24 @@
 import SwiftUI
-import Firebase
-import FirebaseAuth
-import GoogleSignIn
-  
-struct Home: View {
-    @State private var err : String = ""
-    @State private var showView1 = false
-    @State private var showView2 = false
+
+struct RefeicaoView: View {
     @ObservedObject private var viewModel = RefeicaoViewModel()
     @State private var isShowingAddRefeicaoView = false
-    @State var path = NavigationPath()
+    @State var isShowingBottomSheet = false
     
-    private let user = GIDSignIn.sharedInstance.currentUser
-   
-      
     var body: some View {
-
-        NavigationStack(path: $path){
-            VStack{
-                Text("Acompanhe seus registros diarios!").padding()
-                
-                    .navigationTitle("Home")
-            }
+        NavigationView{
             
-            Spacer()
-            
+            Text("").navigationTitle("Suas refeições")
             List(viewModel.refeicoes) { refeicao in
-                VStack(alignment: .leading) {
-                    Text(refeicao.nomeDaRefeicao).font(.headline)
-                    Text(refeicao.alimento)
-                    Text(refeicao.valorCalorico + " kcal")
+                HStack(spacing: 10) {
+                    Text("Refeição: " + refeicao.nomeDaRefeicao + "\n").frame(alignment: .leading)
+                    Text("Alimento \n" + refeicao.alimento + "\n").frame(alignment: .center)
+                    Text(refeicao.valorCalorico).frame(alignment: .trailing)
                 }.swipeActions(allowsFullSwipe: false){
                     Button{
                         isShowingAddRefeicaoView = true
                     } label: {
-                        Label("Editar", systemImage: "pencil.circle.fill")
+                        Label("Editar", systemImage: "pencil")
                     }
                     .tint(.blue)
                     Button(role: .destructive){
@@ -44,7 +28,6 @@ struct Home: View {
                     }
                     
                 }
-               
                 .navigationDestination(isPresented: $isShowingAddRefeicaoView, destination: {
                     AdicionaRefeicaoView(refeicaoId: refeicao.id, nomeDaRefeicao: refeicao.nomeDaRefeicao, alimento: refeicao.alimento, valorCalorico: refeicao.valorCalorico)}
                 )
@@ -52,13 +35,14 @@ struct Home: View {
                 self.viewModel.getAllData()
             }
             
+          
         }
     }
-    
 }
 
-struct Home_Previews: PreviewProvider {
+
+struct RefeicaoView_Previews: PreviewProvider {
     static var previews: some View {
-        Home()
+        RefeicaoView()
     }
 }

@@ -1,33 +1,23 @@
-//
-//  AuthenticationView.swift
-//  Diario Alimentar
-//
-//  Created by Sydy on 12/10/23.
-//
-
 import Foundation
 import Firebase
 import GoogleSignIn
 
 struct Authentication {
     func googleOauth() async throws {
-        // google sign in
         guard let clientID = FirebaseApp.app()?.options.clientID else {
             fatalError("no firbase clientID found")
         }
   
-        // Create Google Sign In configuration object.
         let config = GIDConfiguration(clientID: clientID)
         GIDSignIn.sharedInstance.configuration = config
           
-        //get rootView
+        
         let scene = await UIApplication.shared.connectedScenes.first as? UIWindowScene
         guard let rootViewController = await scene?.windows.first?.rootViewController
         else {
             fatalError("There is no root view controller!")
         }
           
-        //google sign in authentication response
         let result = try await GIDSignIn.sharedInstance.signIn(
             withPresenting: rootViewController
         )
@@ -36,7 +26,6 @@ struct Authentication {
             throw "Unexpected error occurred, please retry"
         }
           
-        //Firebase auth
         let credential = GoogleAuthProvider.credential(
             withIDToken: idToken, accessToken: user.accessToken.tokenString
         )

@@ -1,16 +1,29 @@
-//
-//  Login.swift
-//  Diario Alimentar
-//
-//  Created by Sydy on 14/10/23.
-//
-
 import SwiftUI
 import GoogleSignIn
+import CoreData
 
 struct Login: View {
-//    @EnvironmentObject var viewModel: LoginViewModel
+    @Environment(\.managedObjectContext) private var viewContext
     @State private var err: String = ""
+    
+    @Environment(\.dismiss) private var dismiss
+    
+    func saveUser(){
+        let user = GIDSignIn.sharedInstance.currentUser
+        
+        let newUser = Users(context: viewContext)
+        newUser.email = user?.profile?.email
+        newUser.nome = user?.profile?.name
+        
+        do {
+            try viewContext.save()
+            dismiss()
+        } catch {
+            print(error.localizedDescription)
+        }
+        
+    }
+    
     
     var body: some View {
         Spacer()
@@ -37,14 +50,19 @@ struct Login: View {
                Task {
                    do {
                        try await Authentication().googleOauth()
+                       saveUser()
                    } catch let e {
                        print(e)
                        err = e.localizedDescription
                    }
                }
            }
+        
+       
 
     }
+    
+  
         
 }
 
@@ -63,8 +81,9 @@ struct GoogleSignInButton: UIViewRepresentable {
   }
 }
 
+
 struct Login_Previews: PreviewProvider {
     static var previews: some View {
-        Login()
+        Login().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
     }
 }

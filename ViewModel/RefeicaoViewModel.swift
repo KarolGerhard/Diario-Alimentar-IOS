@@ -2,9 +2,11 @@
 
 import Foundation
 import FirebaseFirestore
+import GoogleSignIn
 
 class RefeicaoViewModel: ObservableObject{
     @Published var refeicoes = [Refeicao]()
+    private let userLogado = GIDSignIn.sharedInstance.currentUser
 
     private var db = Firestore.firestore()
     
@@ -17,27 +19,28 @@ class RefeicaoViewModel: ObservableObject{
 
                self.refeicoes = documents.map { (queryDocumentSnapshot) -> Refeicao in
                    let data = queryDocumentSnapshot.data()
-                   let nome = data["nome"] as? String ?? ""
-                   let quantidade = data["quantidade"] as? String ?? ""
+                   let nomeDaRefeicao = data["nomeDaRefeicao"] as? String ?? ""
+                   let alimento = data["alimento"] as? String ?? ""
+                   let valorCalorico = data["valorCalorico"] as? String ?? ""
                    let id = queryDocumentSnapshot.documentID
-                   return Refeicao(id: id, nome: nome, quantidade: quantidade)
+                   return Refeicao(id: id, nomeDaRefeicao: nomeDaRefeicao, alimento: alimento, valorCalorico: valorCalorico)
                }
            }
        }
     
-    func addRefeicao(nome: String, quantidade: String) {
+    func addRefeicao(nomeDaRefeicao: String, alimento: String, valorCalorico: String) {
             do {
-                _ = try db.collection("refeicoes").addDocument(data: ["nome": nome, "quantidade": quantidade])
+                _ = try db.collection("refeicoes").addDocument(data: ["nomeDaRefeicao": nomeDaRefeicao, "alimento": alimento, "valorCalorico": valorCalorico])
 
             }
             catch {
-                fatalError("Unable to add card: \(error.localizedDescription).")
+                fatalError("Problema ao adicionar: \(error.localizedDescription).")
             }
         }
     
     func updateRefeicao(refeicao: Refeicao) {
         let refeicaoDoc = db.collection("refeicoes").document(refeicao.id)
-        refeicaoDoc.setData(["nome": refeicao.nome, "quantidade": refeicao.quantidade!]){ error in
+        refeicaoDoc.setData(["nomeDaRefeicao": refeicao.nomeDaRefeicao, "alimento": refeicao.alimento, "valorCalorico": refeicao.valorCalorico]){ error in
               if let error = error {
                   print("Error updating document: \(error)")
               } else {
@@ -55,10 +58,8 @@ class RefeicaoViewModel: ObservableObject{
                } else {
                    print("Document successfully updated")
                }
-            
         }
     }
-    
 }
 
 
