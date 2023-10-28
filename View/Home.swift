@@ -9,14 +9,10 @@ struct Home: View {
     @State private var showView2 = false
     @ObservedObject private var viewModel = RefeicaoViewModel()
     @State private var isShowingAddRefeicaoView = false
-    @State var path = NavigationPath()
     
-    private let user = GIDSignIn.sharedInstance.currentUser
-   
-      
     var body: some View {
 
-        NavigationStack(path: $path){
+        NavigationStack(){
             VStack{
                 Text("Acompanhe seus registros diarios!").padding()
                 

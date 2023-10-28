@@ -6,7 +6,6 @@ import GoogleSignIn
 
 class RefeicaoViewModel: ObservableObject{
     @Published var refeicoes = [Refeicao]()
-    private let userLogado = GIDSignIn.sharedInstance.currentUser
 
     private var db = Firestore.firestore()
     
